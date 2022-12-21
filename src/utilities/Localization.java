@@ -1,6 +1,21 @@
 package utilities;
 
+import java.util.StringJoiner;
+
 public class Localization {
-    String country;
-    String city;
+    private String country;
+    private String city;
+
+    public Localization(String country, String city) {
+        this.country = country;
+        this.city = city;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Localization.class.getSimpleName() + "[", "]")
+                .add("country='" + country + "'")
+                .add("city='" + city + "'")
+                .toString();
+    }
 }
