@@ -19,6 +19,10 @@ public class Car {
         this.price = price;
     }
 
+    public String getCompany() {
+        return company;
+    }
+
     @Override
     public String toString() {
         String sb = "Car{" + "color='" + color + '\'' +
