@@ -1,4 +1,5 @@
 package services;
+import taskAbilities.Task1;
 import utilities.Purchase;
 
 import java.nio.file.Path;
@@ -17,7 +18,7 @@ public class showDetails {
 
     }
 
-    private static void letsStart(Scanner sc,Path path) {
+    public static void letsStart(Scanner sc,Path path) {
         System.out.println("Wybierz task");
         System.out.println("Wpisz task1 aby zobaczyć zmapowaną liste produktów z pliku csv");
         System.out.println("pakiet 2");
@@ -29,8 +30,12 @@ public class showDetails {
         List<Purchase> listOfPurchases = fileService.loadData(path);
         while (sc.hasNextLine()){
            String task = sc.nextLine();
-           switch (task){
-               case "task1"-> listOfPurchases.forEach(System.out::println);
+           switch (task.trim()){
+               case "task1"-> {
+                   if (listOfPurchases != null) {
+                       Task1.printDatas(listOfPurchases, sc);
+                   }
+               }
                case "powrót" ->letsStart(sc, path);
                default -> System.out.println("nie rozumiem");
            }
