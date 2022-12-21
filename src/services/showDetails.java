@@ -25,7 +25,6 @@ public class showDetails {
         System.out.println("Wybierz task");
         System.out.println("Wpisz task1 aby zobaczyć zmapowaną liste produktów z pliku csv");
         System.out.println("wpisz reset aby usunąć wszystkie utworzone pliki");
-        System.out.println("pakiet 3");
         pakietValidator(sc, path); //funkcja sprawdzająca który task został wybrany
     }
 
@@ -39,6 +38,7 @@ public class showDetails {
                    if (listOfPurchases != null) {
                        Task1.printDatas(listOfPurchases, sc);
                    }
+
                }
                case "reset" -> SavingFilesService.resetFiles();
                case "powrót" ->letsStart(sc, path);
