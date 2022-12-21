@@ -1,7 +1,7 @@
 package utilities;
 
 
-public class Osoba {
+public class Person {
    String imie;
    String nazwisko;
    String email;
