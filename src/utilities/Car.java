@@ -23,6 +23,26 @@ public class Car {
         return company;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public String getVin() {
+        return vin;
+    }
+
+    public String getModel_year() {
+        return model_year;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
     @Override
     public String toString() {
         String sb = "Car{" + "color='" + color + '\'' +

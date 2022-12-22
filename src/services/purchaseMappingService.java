@@ -7,6 +7,7 @@ import utilities.Purchase;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.SplittableRandom;
 
 public class purchaseMappingService {
     public static Purchase mapPurchase(String input){
@@ -36,5 +37,25 @@ public class purchaseMappingService {
                 new Car(color,vin,company,model,model_year, price),
                 new Localization(country, city),date);
     }
+    public static String tocsvRow(Purchase purchase){
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                purchase.getId(),
+                purchase.getPerson().getImie(),
+                purchase.getPerson().getNazwisko(),
+                purchase.getPerson().getEmail(),
+                purchase.getPerson().getIp(),
+                purchase.getCar().getColor(),
+                purchase.getCar().getVin(),
+                purchase.getCar().getCompany(),
+                purchase.getCar().getModel(),
+                purchase.getCar().getModel_year(),
+                purchase.getCar().getPrice(),
+                purchase.getLocalization().getCountry(),
+                purchase.getLocalization().getCity(),
+                purchase.getDate()
+        );
+
+    }
+
 
 }

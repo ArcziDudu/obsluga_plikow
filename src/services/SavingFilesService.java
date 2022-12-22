@@ -1,7 +1,8 @@
-package taskAbilities;
+package services;
 
 import path.getPath;
 import services.showDetails;
+import taskAbilities.Task1;
 import utilities.Car;
 import utilities.Purchase;
 import services.fileService;
@@ -9,15 +10,18 @@ import services.fileService;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public abstract class SavingFilesService {
+    static List<Purchase> listOfPurchases = fileService.loadMainData(getPath.getPath());
     public static void saveThePurchaseList(List<Purchase> listOfPurchases, Scanner sc) throws IOException {
         //użytkownik zapisuje zmapowane dane  do pliku
         Path savePath = getPath.getPathSavedFromTak1();
@@ -26,43 +30,106 @@ public abstract class SavingFilesService {
                 writer.write(o.toString());
                 writer.newLine();
             }
-            System.out.println("zapisano!");
-            System.out.println("wpisz więcej aby zobaczyć więcej funkcji");
-            System.out.println("wpisz usuń aby usunąć utworzony plik");
-            System.out.println("wpisz powrót aby wrócić do menu wyboru tasków");
-            checkAnswer(sc);
+            MenuAfterSavedMainFile(sc);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    static void checkAnswer(Scanner sc) throws IOException {
-        //użytkownik wybiera co chce zrobić z usuniętym plikiem
-        String line = sc.nextLine();
 
-        if("usuń".equals(line)){
+    private static void MenuAfterSavedMainFile(Scanner sc) throws IOException {
+        //użytkownik wybiera co chce zrobić ze stworzonym plikiem
+        System.out.println("zapisano!");
+        System.out.println("wpisz 1 aby zobaczyć więcej funkcji");
+        System.out.println("wpisz 2 aby usunąć utworzony plik");
+        System.out.println("wpisz 3 aby wrócić do menu wyboru tasków");
+        checkAnswer(sc);
+    }
+
+    static void checkAnswer(Scanner sc) throws IOException {
+        //użytkownik wybiera co chce zrobić ze stworzonym plikiem
+        String line = sc.nextLine();
+        if("2".equals(line)){
             resetFiles();
             System.out.println("Usunięto!");
-        } else if ("więcej".equals(line)) {
-            Task1.showMOre(sc);
-        } else if ("powrót".equals(line)) {
+        } else if ("1".equals(line)) {
+            showMOre(sc);
+        } else if ("3".equals(line)) {
             showDetails.letsStart(sc, getPath.getPath());
         }
     }
+
     public static void resetFiles() throws IOException {
         File[] files = new File("src/createdFiles").listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
+       File[] files1 = new File("src/createdFiles/allCarsFiles/purchase-of-").listFiles();
+        for (File file : files1) {
+            if (file.isFile()){
                 file.delete();
-            } else if (file.isFile()) {
+            }
+        }
+        assert files != null;
+        for (File file : files) {
+                if (file.isFile()) {
                 file.delete();
             }
         }
         System.out.println("pomyślnie usunięto!");
+        System.out.println("Wpisz 1 aby zobaczyć zmapowaną liste produktów z pliku csv");
 
+    }
+    public static void showMOre(Scanner sc) {
+
+        System.out.println("1 - aby sprawdź czy w pliku występuje wybrany model samochodu");
+        System.out.println("2 - zapisz do plików wszystkie marki samochodów");
+        System.out.println("3 - powrót");
+        while (sc.hasNextLine()){
+            String line = sc.nextLine();
+            switch (line){
+                case "1" ->{
+                    System.out.println("wpisz marke samochodu np mazda");
+                    SavingFilesService.checkCarModel(sc);
+                }
+                case "2"->saveAll(sc);
+                case "3" -> {
+                    try {
+                        Task1.printDatas(listOfPurchases, sc);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void saveAll(Scanner scanner) {
+        Map<String, List<Purchase>> carsByCompany = listOfPurchases.stream()
+                .collect(Collectors
+                        .groupingBy(p -> p.getCar().getCompany()));
+        AllCarsFileSaver.run(carsByCompany);
+        System.out.println("zapisano!");
+        System.out.println("1 - pokaż rozmiary poszczególnych plików malejąco");
+        System.out.println("2 - pokaż ilość samochodów danej marki w pliku");
+        System.out.println("3 - wróć");
+        checkAnswerFromAllSaver(scanner, carsByCompany);
+    }
+
+    private static void checkAnswerFromAllSaver(Scanner scanner,  Map<String, List<Purchase>> carsByCompany) {
+     while (scanner.hasNextLine()){
+         String line = scanner.nextLine();
+         switch (line){
+             case "1" -> {
+                 AllCarsFileSaver.showFilesLength();
+             }
+             case "2" -> System.out.println("wybrałes 2");
+             case "3" -> System.out.println("wróciłes");
+             default -> System.out.println("nie rozumiem");
+
+         }
+     }
     }
 
     public static void checkCarModel(Scanner sc) {
-        List<Purchase> listOfPurchases = fileService.loadData(getPath.getPath());
+        //FUNCKJA SPRAWDZAJĄCA CZY WPISANY MODEL WYSTEPUJE W PLIKU
+
         while (sc.hasNextLine()){
             String line = sc.nextLine();
             String car = stringCar(line);
@@ -87,12 +154,11 @@ public abstract class SavingFilesService {
             }else {
                 System.err.println("w pliku nie ma podanego samochodu. Spróbuj ponownie");
             }
-
-
         }
     }
 
     private static void showInfoCar(List<Purchase> listOfPurchases, String car, Scanner scanner) {
+        //funkcja do wyswietlania i zapisu pliku z wybranym samochodem
         List<Car> cars = listOfPurchases.stream()
                 .map(Purchase::getCar)
                 .filter(e -> car.equals(e.getCompany()))
@@ -109,11 +175,15 @@ public abstract class SavingFilesService {
     }
 
     private static void choseNumber(Scanner scanner, List<Car> cars) {
+        //funckca sterująca
         while (scanner.hasNextLine()){
             String line = scanner.nextLine();
             switch (line){
                 case "1"->saveOneCar(cars);
-                case "2"->Task1.showMOre(scanner);
+                case "2" -> {
+                    System.out.println("wpisz marke samochodu np mazda");
+                    SavingFilesService.checkCarModel(scanner);
+                }
                 case "3"-> {
                     try {
                         showDetails.letsStart(scanner, getPath.getPath());
@@ -126,6 +196,7 @@ public abstract class SavingFilesService {
     }
 
     private static void saveOneCar(List<Car> cars) {
+        //funkcja do  zapisu wybranego pojazdu
         Optional<String> first = cars.stream().map(e -> e.getCompany().toString()).findFirst();
         String fileName = first.get();
         Path carFilePath = Paths.get("src/createdFiles/"+fileName+".csv");
@@ -143,6 +214,7 @@ public abstract class SavingFilesService {
     }
 
     private static String stringCar(String line) {
+        //funkcja sprawdzająca czy wybrany samochod ma trzy litery
         String car;
         car = line.substring(0, 1).toUpperCase() + line.substring(1);
         if(car.length()==3){
@@ -150,4 +222,5 @@ public abstract class SavingFilesService {
         }
         return car;
     }
+
 }
