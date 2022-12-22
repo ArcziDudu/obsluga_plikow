@@ -7,10 +7,13 @@ import utilities.Purchase;
 import services.fileService;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -46,8 +49,16 @@ public abstract class SavingFilesService {
         }
     }
     public static void resetFiles() throws IOException {
+        File[] files = new File("src/createdFiles").listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                file.delete();
+            } else if (file.isFile()) {
+                file.delete();
+            }
+        }
         System.out.println("pomyślnie usunięto!");
-        Files.deleteIfExists(Path.of("src/createdFiles/fileFromTask1.csv"));
+
     }
 
     public static void checkCarModel(Scanner sc) {
@@ -66,30 +77,69 @@ public abstract class SavingFilesService {
                     String lineTN = sc.nextLine().toUpperCase();
                     switch (lineTN){
                         case "T"->{
-                          showInfoCar(listOfPurchases, car);
+                          showInfoCar(listOfPurchases, car, sc);
+                          return;
                         }
                         case "N"-> System.out.println("czekam");
                     }
 
                 }
             }else {
-                System.out.println("w pliku nie ma podanego samochodu");
+                System.err.println("w pliku nie ma podanego samochodu. Spróbuj ponownie");
             }
 
 
         }
     }
 
-    private static void showInfoCar(List<Purchase> listOfPurchases, String car) {
+    private static void showInfoCar(List<Purchase> listOfPurchases, String car, Scanner scanner) {
         List<Car> cars = listOfPurchases.stream()
                 .map(Purchase::getCar)
                 .filter(e -> car.equals(e.getCompany()))
                 .toList();
       cars.forEach(System.out::println);
+        System.out.println();
+        System.out.println("ilość samochódów danej marki w pliku: " + cars.size());
+        System.out.println();
         System.out.println("wybierz cyfre:");
         System.out.println("1 - zapisz do pliku");
         System.out.println("2 - powrót do wybory marki");
         System.out.println("3 - powrót do menu");
+        choseNumber(scanner, cars);
+    }
+
+    private static void choseNumber(Scanner scanner, List<Car> cars) {
+        while (scanner.hasNextLine()){
+            String line = scanner.nextLine();
+            switch (line){
+                case "1"->saveOneCar(cars);
+                case "2"->Task1.showMOre(scanner);
+                case "3"-> {
+                    try {
+                        showDetails.letsStart(scanner, getPath.getPath());
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private static void saveOneCar(List<Car> cars) {
+        Optional<String> first = cars.stream().map(e -> e.getCompany().toString()).findFirst();
+        String fileName = first.get();
+        Path carFilePath = Paths.get("src/createdFiles/"+fileName+".csv");
+        try (BufferedWriter writer = Files.newBufferedWriter(carFilePath)) {
+            for (Object o : cars) {
+                writer.write(o.toString());
+                writer.newLine();
+            }
+            System.out.println("zapisano!");
+            System.out.println("2 - powrót do wybory marki");
+            System.out.println("3 - powrót do menu");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String stringCar(String line) {
