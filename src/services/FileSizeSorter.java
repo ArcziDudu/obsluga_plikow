@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class FileSizeSorter {
+    //klasa do sortowania plików po rozmiarze
         public static Map<String, Long> sortFileSizes(Map<String, Long> fileSizes) {
             TreeMap<String, Long> sortedFileSizes = new TreeMap<>(new ValueComparator(fileSizes));
             sortedFileSizes.putAll(fileSizes);

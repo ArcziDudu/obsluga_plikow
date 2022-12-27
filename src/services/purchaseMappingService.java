@@ -7,10 +7,9 @@ import utilities.Purchase;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.SplittableRandom;
 
 public class purchaseMappingService {
-    public static Purchase mapPurchase(String input){
+    public static Purchase mapPurchase(String input) {
 //id,first_name,last_name,email,ip_address,color,car_vin,car_company,car_model,car_model_year,car_price,country,city,date
         String[] word = input.split(",");
         long id = Long.parseLong(word[0]);
@@ -33,11 +32,12 @@ public class purchaseMappingService {
 
         return new Purchase(
                 id,
-                new Person(imie,nazwisko,email,ip),
-                new Car(color,vin,company,model,model_year, price),
-                new Localization(country, city),date);
+                new Person(imie, nazwisko, email, ip),
+                new Car(color, vin, company, model, model_year, price),
+                new Localization(country, city), date);
     }
-    public static String tocsvRow(Purchase purchase){
+
+    public static String tocsvRow(Purchase purchase) {
         return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
                 purchase.getId(),
                 purchase.getPerson().getImie(),

@@ -6,7 +6,6 @@ import services.showDetails;
 import utilities.Purchase;
 
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Scanner;
@@ -23,9 +22,9 @@ public class Task1 {
     }
 
     private static void afterTask1Validator(List<Purchase> listOfPurchases, Scanner sc) throws IOException {
-        while (sc.hasNextLine()){
+        while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            switch (line){
+            switch (line) {
                 case "1" -> {
                     listOfPurchases.forEach(System.out::println);
                     System.out.println("wpisz 2 aby zapisać wszystko do pliku csv");
@@ -34,9 +33,9 @@ public class Task1 {
                 case "2" -> {
                     SavingFilesService.saveThePurchaseList(listOfPurchases, sc);
                 }
-                case "3"->{
+                case "3" -> {
                     boolean exists = Files.exists(getPath.getPathSavedFromTak1());
-                    if(!exists){
+                    if (!exists) {
                         System.err.println("najpierw zapisz plik");
                         printDatas(listOfPurchases, sc);
                         return;
@@ -48,7 +47,6 @@ public class Task1 {
             }
         }
     }
-
 
 
 }
