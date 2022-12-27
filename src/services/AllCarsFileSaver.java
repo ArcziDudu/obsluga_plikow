@@ -6,7 +6,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
@@ -124,6 +126,28 @@ public class AllCarsFileSaver {
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
         return new Pair<>(avaragePrice, count);
+    }
+
+    public static void dateRapoert(Scanner scanner) {
+        System.out.println("zapisano !");
+        System.out.println("2 - powrót");
+        List<Purchase> listOfPurchases = fileService.loadMainData(getPath.getPath());
+        TreeMap<LocalDate, Long> mapByDate = listOfPurchases.stream().collect(Collectors.groupingBy(
+                Purchase::getDate,
+                TreeMap::new,
+                Collectors.counting()
+        ));
+        AtomicInteger byDateCounter = new AtomicInteger(1);
+        List<String> list = mapByDate.entrySet().stream()
+                .map(e -> String.format("%s,%s,%s", byDateCounter.getAndIncrement(), e.getKey(), e.getValue())).toList();
+        generateReport(list, "ByDate");
+
+
+    }
+
+    private static void generateReport(List<String> list, String byDate) {
+        Path path = Paths.get("src/createdFiles/reportDatas/reportDate.csv");
+        fileService.saveToFile(path, list, byDate);
     }
 }
 
