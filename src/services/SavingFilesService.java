@@ -60,6 +60,7 @@ public abstract class SavingFilesService {
         //usuwa wszystkie pliki
         File[] files = new File("src/createdFiles").listFiles();
         File[] files1 = new File("src/createdFiles/allCarsFiles/purchase-of-").listFiles();
+        File[] files2 = new File("src/createdFiles/reportDatas").listFiles();
         for (File file : files1) {
             if (file.isFile()) {
                 file.delete();
@@ -67,6 +68,12 @@ public abstract class SavingFilesService {
         }
         assert files != null;
         for (File file : files) {
+            if (file.isFile()) {
+                file.delete();
+            }
+        }
+        assert files2 != null;
+        for (File file : files2) {
             if (file.isFile()) {
                 file.delete();
             }
@@ -107,8 +114,9 @@ public abstract class SavingFilesService {
                         .groupingBy(p -> p.getCar().getCompany()));
         AllCarsFileSaver.run(carsByCompany);
         System.out.println("1 - pokaż rozmiary poszczególnych plików malejąco");
-        System.out.println("2 - aby wygenerować raport ");
-        System.out.println("3 - wróć");
+        System.out.println("2 - aby wygenerować raport sreniej ceny sprzedaży poszczególnych marek");
+        System.out.println("3 - aby wygenerować raport daty sprzedaży poszczególnych marek");
+        System.out.println("4 - powrót");
         checkAnswerFromAllSaver(scanner, carsByCompany);
     }
 
@@ -125,7 +133,8 @@ public abstract class SavingFilesService {
                     return;
                 }
                 case "2" -> AllCarsFileSaver.makeRaport(scanner);
-                case "3" -> showMOre(scanner);
+                case "3" -> AllCarsFileSaver.dateRapoert(scanner);
+                case "4" -> showMOre(scanner);
                 default -> System.out.println("nie rozumiem");
 
             }
