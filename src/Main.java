@@ -11,9 +11,9 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
 
-        while (sc.hasNextLine()){
-            String test =  sc.nextLine().trim().toLowerCase();
-            showDetails.printingFunction(test, sc,getPath.getPath());
+        while (sc.hasNextLine()) {
+            String test = sc.nextLine().trim().toLowerCase();
+            showDetails.printingFunction(test, sc, getPath.getPath());
         }
     }
 }

@@ -23,4 +23,20 @@ public class Person {
               '}';
       return sb;
    }
+
+   public String getImie() {
+      return imie;
+   }
+
+   public String getNazwisko() {
+      return nazwisko;
+   }
+
+   public String getEmail() {
+      return email;
+   }
+
+   public String getIp() {
+      return ip;
+   }
 }
